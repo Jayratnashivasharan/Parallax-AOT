@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attack on Titan | Shinzou wo Sasageyo</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Teko:wght@300;400;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Rajdhani', sans-serif;
+            overflow-x: hidden;
+            background: #0d0d0d;
+            color: #e0e0e0;
+        }
+        
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #0d0d0d 0%, #1a1a1a 50%, #262626 100%);
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 100%;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 50px,
+                rgba(99, 102, 241, 0.03) 50px,
+                rgba(99, 102, 241, 0.03) 100px
+            );
+            animation: slideBackground 20s linear infinite;
+        }
+        
+        @keyframes slideBackground {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(50%); }
+        }
+        
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: rgba(232, 67, 141, 0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+        
+        /* Navbar Styles */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            background: rgba(13, 13, 13, 0.95);
+            backdrop-filter: blur(15px);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 1.2rem 0;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .navbar.scrolled {
+            padding: 0.6rem 0;
+            background: rgba(13, 13, 13, 0.98);
+            border-bottom: 1px solid rgba(99, 102, 241, 0.4);
+            box-shadow: 0 8px 40px rgba(99, 102, 241, 0.15);
+        }
+        
+        .navbar-brand {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #6366f1);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 3px;
+            animation: gradientShift 3s ease infinite;
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .nav-link {
+            color: #b8b8b8 !important;
+            font-weight: 700;
+            margin: 0 1.2rem;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 1rem;
+            font-family: 'Teko', sans-serif;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+        
+        .nav-link:hover::before {
+            width: 100%;
+        }
+        
+        .nav-link:hover {
+            color: #6366f1 !important;
+            transform: translateY(-3px);
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100px;
+            height: 100px;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background: linear-gradient(rgba(13, 13, 13, 0.7), rgba(13, 13, 13, 0.8)), 
+                        url('bg.jpg');
+            background-size: cover;
+            background-position: center;
+            transform: translateZ(-1px) scale(1.5);
+            z-index: -1;
+            filter: brightness(0.6);
+        }
+        
+        .hero-content {
+            text-align: center;
+            z-index: 2;
+            animation: heroFadeIn 2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        @keyframes heroFadeIn {
+            0% { opacity: 0; transform: translateY(100px) scale(0.8); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        
+        .hero-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899, #8b5cf6, #6366f1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            letter-spacing: 8px;
+            animation: titleGlow 4s ease infinite;
+            filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.6));
+        }
+        
+        @keyframes titleGlow {
+            0%, 100% { background-position: 0% 50%; filter: drop-shadow(0 0 30px rgba(99, 102, 241, 0.6)); }
+            50% { background-position: 100% 50%; filter: drop-shadow(0 0 50px rgba(139, 92, 246, 0.8)); }
+        }
+        
+        .hero-subtitle {
+            font-size: 1.8rem;
+            color: #9ca3af;
+            margin-bottom: 3rem;
+            font-style: italic;
+            font-family: 'Rajdhani', sans-serif;
+            animation: subtitleFloat 3s ease-in-out infinite;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        @keyframes subtitleFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .hero-btn {
+            padding: 18px 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: 2px solid transparent;
+            border-radius: 50px;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.4);
+            cursor: pointer;
+            font-family: 'Teko', sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        .hero-btn:hover::before {
+            left: 100%;
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.6);
+            border-color: #6366f1;
+        }
+        
+        .hero-btn:active {
+            transform: translateY(-5px) scale(1.02);
+        }
+        
+        /* Characters Section */
+        .characters-section {
+            padding: 120px 0;
+            background: linear-gradient(180deg, #0d0d0d, #1a1a1a, #0d0d0d);
+            position: relative;
+        }
+        
+        .section-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4rem;
+            font-weight: 900;
+            text-align: center;
+            margin-bottom: 4rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            position: relative;
+            animation: sectionTitlePulse 3s ease-in-out infinite;
+        }
+        
+        @keyframes sectionTitlePulse {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5)); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(139, 92, 246, 0.8)); }
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 4px;
+            background: linear-gradient(90deg, transparent, #6366f1, #8b5cf6, transparent);
+            animation: lineExpand 2s ease-in-out infinite;
+        }
+        
+        @keyframes lineExpand {
+            0%, 100% { width: 150px; }
+            50% { width: 250px; }
+        }
+        
+        .character-card {
+            position: relative;
+            height: 500px;
+            border-radius: 25px;
+            overflow: hidden;
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.6);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        
+        .character-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, transparent, rgba(13, 13, 13, 0.95));
+            z-index: 1;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .character-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(99, 102, 241, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+        }
+        
+        .character-card:hover::after {
+            animation: shineEffect 1.5s ease;
+        }
+        
+        @keyframes shineEffect {
+            0% { top: -50%; left: -50%; }
+            100% { top: 150%; left: 150%; }
+        }
+        
+        .character-card:hover {
+            transform: translateY(-15px) rotateY(5deg);
+            box-shadow: 0 30px 80px rgba(99, 102, 241, 0.4);
+            border-color: rgba(99, 102, 241, 0.6);
+        }
+        
+        .character-card:hover::before {
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.2), rgba(13, 13, 13, 0.9));
+        }
+        
+        .character-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            filter: grayscale(50%);
+        }
+        
+        .character-card:hover .character-img {
+            transform: scale(1.15) rotate(2deg);
+            filter: grayscale(0%) brightness(1.1);
+        }
+        
+        .character-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 35px;
+            z-index: 2;
+            transform: translateY(40px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .character-card:hover .character-info {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .character-name {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 20px rgba(99, 102, 241, 0.5);
+        }
+        
+        .character-desc {
+            font-size: 1.05rem;
+            color: #d1d5db;
+            line-height: 1.8;
+            font-family: 'Rajdhani', sans-serif;
+        }
+        
+        /* Story Section */
+        .story-section {
+            padding: 120px 0;
+            background: url('attack-on-titan-3840x2160-21065.jpg');
+            background-attachment: fixed;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        
+        .story-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 13, 13, 0.92);
+            backdrop-filter: blur(2px);
+        }
+        
+        .story-content {
+            position: relative;
+            z-index: 2;
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .story-text {
+            font-size: 1.4rem;
+            line-height: 2.2;
+            color: #d1d5db;
+            margin-bottom: 2.5rem;
+            font-family: 'Rajdhani', sans-serif;
+            animation: textFadeSlide 1s ease-out;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        
+        @keyframes textFadeSlide {
+            0% { opacity: 0; transform: translateY(30px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Stats Section */
+        .stats-section {
+            padding: 100px 0;
+            background: linear-gradient(180deg, #1a1a1a, #0d0d0d);
+            position: relative;
+        }
+        
+        .stat-box {
+            text-align: center;
+            padding: 40px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1), transparent);
+            border-radius: 50%;
+            transition: all 0.6s;
+        }
+        
+        .stat-box:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+        
+        .stat-box:hover {
+            transform: translateY(-15px) scale(1.05);
+        }
+        
+        .stat-number {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 4.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 0 20px rgba(99, 102, 241, 0.5));
+            position: relative;
+        }
+        
+        .stat-label {
+            font-size: 1.3rem;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-family: 'Teko', sans-serif;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            background: #0d0d0d;
+            padding: 60px 0;
+            text-align: center;
+            border-top: 1px solid rgba(99, 102, 241, 0.3);
+            position: relative;
+        }
+        
+        .social-icons {
+            margin: 30px 0;
+        }
+        
+        .social-icons a {
+            display: inline-block;
+            width: 60px;
+            height: 60px;
+            line-height: 60px;
+            background: linear-gradient(135deg, #1a1a1a, #262626);
+            color: #6366f1;
+            margin: 0 15px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .social-icons a::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 0;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border-radius: 50%;
+            transition: all 0.4s;
+            z-index: -1;
+        }
+        
+        .social-icons a:hover::before {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .social-icons a:hover {
+            color: #fff;
+            transform: translateY(-10px) rotate(360deg);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.5);
+            border-color: #db368e;
+        }
+        
+        /* Scroll Progress Bar */
+        .progress-bar-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: rgba(26, 26, 26, 0.5);
+            z-index: 9999;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #d74fc8, #8b5cf6, #ec4899);
+            width: 0%;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 20px rgba(159, 59, 120, 0.8);
+        }
+        
+        /* Glitch effect on hover */
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch:hover {
+            animation: glitchAnim 0.3s ease-in-out;
+        }
+        
+        @keyframes glitchAnim {
+            0%, 100% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+        }
+        
+        /* Fade animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; letter-spacing: 3px; }
+            .hero-subtitle { font-size: 1.2rem; }
+            .section-title { font-size: 2.5rem; }
+            .stat-number { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Floating Particles -->
+    <script>
+        for(let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 15 + 's';
+            particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+            document.body.appendChild(particle);
+        }
+    </script>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar-container">
+        <div class="progress-bar-fill" id="progressBar"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <a class="navbar-brand glitch" href="#"><i class="fas fa-shield-alt"></i> ATTACK ON TITAN</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="border-color: #6366f1;">
+                <span class="navbar-toggler-icon" style="filter: invert(1);"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#characters">Characters</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#story">Story</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#stats">Stats</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="parallax-bg"></div>
+        <div class="hero-content">
+            <h1 class="hero-title glitch">ATTACK ON TITAN</h1>
+            <p class="hero-subtitle">Shinzou wo Sasageyo - Dedicate Your Heart</p>
+            <button class="hero-btn" onclick="document.getElementById('characters').scrollIntoView({behavior: 'smooth'})">
+                EXPLORE THE WORLD
+            </button>
+        </div>
+    </section>
+
+    <!-- Characters Section -->
+    <section id="characters" class="characters-section">
+        <div class="container">
+            <h2 class="section-title fade-in">Elite Soldiers</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="character-card fade-in">
+                        <img src="eren-yeager-3840x2160-22836.jpg" alt="Eren" class="character-img">
+                        <div class="character-info">
+                            <h3 class="character-name">Eren Yeager</h3>
+                            <p class="character-desc">The determined protagonist who seeks freedom beyond the walls. Holder of the Attack Titan and founding powers.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="character-card fade-in">
+                        <img src="mikasa-ackerman-8k-3840x2160-22854.jpg" alt="Mikasa" class="character-img">
+                        <div class="character-info">
+                            <h3 class="character-name">Mikasa Ackerman</h3>
+                            <p class="character-desc">The elite soldier with unmatched combat skills. Fiercely loyal and one of humanity's strongest warriors.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="character-card fade-in">
+                        <img src="armin-arlert-8k-3840x2160-22823.jpg" alt="Armin" class="character-img">
+                        <div class="character-info">
+                            <h3 class="character-name">Armin Arlert</h3>
+                            <p class="character-desc">The strategic genius whose intellect has saved countless lives. Inheritor of the Colossal Titan.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="character-card fade-in">
+                        <img src="levi-ackerman-8k-3840x2160-22850.jpg" alt="Levi" class="character-img">
+                        <div class="character-info">
+                            <h3 class="character-name">Levi Ackerman</h3>
+                            <p class="character-desc">Humanity's strongest soldier. Captain of the Special Operations Squad with unparalleled combat prowess.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="character-card fade-in">
+                        <img src="https://4kwallpapers.com/images/walls/thumbs_2t/21064.jpg" alt="Historia" class="character-img">
+                        <div class="character-info">
+                            <h3 class="character-name">Historia Reiss</h3>
+                            <p class="character-desc">The true heir to the throne who chose to live freely. Queen of the walls and symbol of hope.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="character-card fade-in">
+                        <img src="sasha.jpg" alt="Sasha" class="character-img">
+                        <div class="character-info">
+                            <h3 class="character-name">Sasha Blouse</h3>
+                            <p class="character-desc">The gifted marksman with exceptional instincts. Known for her courage and unwavering spirit.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section id="story" class="story-section">
+        <div class="story-content">
+            <h2 class="section-title fade-in glitch">The Story</h2>
+            <p class="story-text fade-in">
+                In a world where humanity lives behind massive walls to protect themselves from terrifying giants known as Titans, 
+                young Eren Yeager's life changes forever when a Colossal Titan breaches the wall, leading to the destruction of his hometown 
+                and the death of his mother. Vowing revenge, Eren joins the Survey Corps, an elite group of soldiers who fight Titans outside the walls.
+            </p>
+            <p class="story-text fade-in">
+                As the story unfolds, dark secrets about the Titans, the walls, and humanity itself come to light. 
+                The struggle for freedom becomes a complex tale of sacrifice, betrayal, and the true meaning of what it means to be human.
+            </p>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section id="stats" class="stats-section">
+        <div class="container">
+            <h2 class="section-title fade-in glitch">By The Numbers</h2>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stat-box fade-in">
+                        <div class="stat-number" data-target="4">0</div>
+                        <div class="stat-label">Seasons</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box fade-in">
+                        <div class="stat-number" data-target="87">0</div>
+                        <div class="stat-label">Episodes</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box fade-in">
+                        <div class="stat-number" data-target="9">0</div>
+                        <div class="stat-label">Titan Shifters</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-box fade-in">
+                        <div class="stat-number" data-target="3">0</div>
+                        <div class="stat-label">Walls</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="social-icons">
+                <a href="#" class="glitch"><i class="fab fa-facebook-f"></i></a>
+                <a href="#" class="glitch"><i class="fab fa-twitter"></i></a>
+                <a href="#" class="glitch"><i class="fab fa-instagram"></i></a>
+                <a href="#" class="glitch"><i class="fab fa-youtube"></i></a>
+            </div>
+            <p style="color: #9ca3af; font-family: 'Rajdhani', sans-serif; font-size: 1.1rem;">&copy; 2024 Attack on Titan Fan Site. All rights reserved.</p>
+            <p style="color: #6366f1; font-size: 1.2rem; font-family: 'Orbitron', sans-serif; margin-top: 15px;">Shinzou wo Sasageyo</p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Progress bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // Parallax effect
+        window.addEventListener('scroll', () => {
+            const parallax = document.querySelector('.parallax-bg');
+            const scrolled = window.pageYOffset;
+            parallax.style.transform = `translateY(${scrolled * 0.5}px)`;
+        });
+
+        // Fade in on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Counter animation
+        const animateCounter = (element) => {
+            const target = parseInt(element.getAttribute('data-target'));
+            const duration = 2000;
+            const step = target / (duration / 16);
+            let current = 0;
+
+            const updateCounter = () => {
+                current += step;
+                if (current < target) {
+                    element.textContent = Math.floor(current);
+                    requestAnimationFrame(updateCounter);
+                } else {
+                    element.textContent = target;
+                }
+            };
+
+            updateCounter();
+        };
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && entry.target.textContent === '0') {
+                    animateCounter(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.stat-number').forEach(el => counterObserver.observe(el));
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Mouse trail effect
+        document.addEventListener('mousemove', (e) => {
+            const trail = document.createElement('div');
+            trail.className = 'mouse-trail';
+            trail.style.cssText = `
+                position: fixed;
+                width: 5px;
+                height: 5px;
+                background: rgba(99, 102, 241, 0.5);
+                border-radius: 50%;
+                pointer-events: none;
+                left: ${e.clientX}px;
+                top: ${e.clientY}px;
+                animation: trailFade 0.8s ease-out forwards;
+                z-index: 9999;
+            `;
+            document.body.appendChild(trail);
+            setTimeout(() => trail.remove(), 800);
+        });
+
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes trailFade {
+                0% { transform: scale(1); opacity: 1; }
+                100% { transform: scale(0); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
